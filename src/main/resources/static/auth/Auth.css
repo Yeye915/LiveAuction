@@ -1,0 +1,359 @@
+/* ==========================================
+   RESET & GLOBAL FONTS CONFIG (STYLE ELITE AUCTION)
+   ========================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family:
+    "Plus Jakarta Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+h1,
+h2,
+h3,
+.brand-title,
+.modal-title,
+.tab-btn {
+  font-family: "Outfit", "Plus Jakarta Sans", sans-serif;
+}
+
+:root {
+  --bg-main: #f2f3f0;
+  --card-bg: #ffffff;
+  --text-primary: #111827;
+  --text-muted: #6b7280;
+  --primary-dark: #23372c; /* Màu Xanh Rêu Đậm Chủ Đạo */
+  --primary-dark-hover: #192820;
+  --primary-accent: #15803d; /* Xanh Lá Đậm Điểm Xuyết */
+  --gold: #c59b27;
+  --accent-red: #ef4444;
+  --border-color: #e5e7eb;
+  --radius-lg: 12px;
+  --radius-md: 8px;
+  --radius-sm: 6px;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================
+   AUTH CARD & BRAND HEADER
+   ========================================== */
+.auth-wrapper {
+  width: 100%;
+  max-width: 420px;
+  padding: 16px;
+}
+
+.auth-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 28px 24px 20px 24px;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  text-align: left;
+}
+
+.logo-icon {
+  font-size: 30px;
+  color: var(--primary-dark);
+  transform: rotate(-30deg);
+}
+
+.brand-title {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #23372c 0%, #15803d 60%, #c59b27 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 2px;
+  background: linear-gradient(135deg, #15803d 0%, #b48512 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================
+   TABS SWITCHER
+   ========================================== */
+.auth-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 10px 0;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #23372c 0%, #15803d 70%, #b48512 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  border-bottom-color: var(--primary-dark);
+}
+
+.tab-btn i {
+  color: var(--text-muted);
+  -webkit-text-fill-color: initial;
+  font-size: 13px;
+}
+
+.tab-btn.active i {
+  color: #23372c;
+  -webkit-text-fill-color: initial;
+}
+
+/* ==========================================
+   FORM CONTROLS & INPUTS
+   ========================================== */
+.auth-form {
+  display: none;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-form.active {
+  display: flex;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 10px 36px 10px 36px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  outline: none;
+  background: #f9fafb;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.input-wrapper input:focus {
+  border-color: var(--primary-dark);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(35, 55, 44, 0.08);
+}
+
+.btn-toggle-pw {
+  position: absolute;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-toggle-pw:hover {
+  color: var(--primary-dark);
+}
+
+.btn-submit {
+  width: 100%;
+  background: var(--primary-dark);
+  color: #ffffff;
+  border: none;
+  padding: 11px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.btn-submit:hover {
+  background: var(--primary-dark-hover);
+}
+
+.btn-submit:active {
+  transform: scale(0.99);
+}
+
+.auth-footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  border-top: 1px dashed var(--border-color);
+  padding-top: 12px;
+}
+
+/* ==========================================
+   MODAL STYLES (ĐỒNG BỘ NGUYÊN BẢN CỦA ELITE AUCTION)
+   ========================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(12px);
+  transition: transform 0.25s ease;
+}
+
+.modal-overlay.active .modal-card {
+  transform: translateY(0);
+}
+
+.modal-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px auto;
+  font-size: 24px;
+}
+
+.success-icon {
+  background: #fef8ec;
+  color: var(--gold);
+  border: 2px solid #fef08a;
+}
+
+.error-icon {
+  background: #fef2f2;
+  color: var(--accent-red);
+  border: 2px solid #fecaca;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.modal-message {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.btn-modal-action {
+  width: 100%;
+  background: var(--primary-dark);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-modal-action:hover {
+  background: var(--primary-dark-hover);
+}

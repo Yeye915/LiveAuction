@@ -4,7 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="12bb3a25-0db9-43ff-a8b3-bbdfa9b86f6d" name="Changes" comment="" />
+    <list default="true" id="12bb3a25-0db9-43ff-a8b3-bbdfa9b86f6d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/auction/controller/BidController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/auction/controller/ChatController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/auction/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/auction/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/auction/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/auction/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/auction/model/Auction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/auction/model/Auction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/auction/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/auction/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/admin.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/auction-room.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/login.html" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,14 +27,18 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="HTML File" />
         <option value="Class" />
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 7
-}</component>
+    &quot;customColor&quot;: &quot;&quot;,
+    &quot;associatedIndex&quot;: 7
+    }</component>
   <component name="ProjectId" id="3JtTifrmVdH96Svicd7EXq1AqiP" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -29,13 +47,17 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.LiveAuctionApplication.executor": "Run",
+    "DefaultHtmlFileTemplate": "HTML File",
     "Maven.LiveAuction [clean].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Spring Boot.LiveAuctionApplication.executor": "Run",
     "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/Hi/IdeaProjects/LiveAuction-main",
     "onboarding.tips.debug.path": "D:/LTM/liveAuction/src/main/java/org/example/Main.java",

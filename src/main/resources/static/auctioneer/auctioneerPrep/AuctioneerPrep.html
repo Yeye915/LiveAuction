@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elite Auction - Chuẩn Bị Phiên Đấu Giá</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="AuctioneerPrep.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="logo-area">
+        <i class="fa-solid fa-gavel logo-icon"></i>
+        <div>
+          <h1 class="brand-title">Elite Auction</h1>
+          <p class="brand-subtitle">
+            Tinh hoa sưu tầm · Giá trị vượt thời gian
+          </p>
+        </div>
+      </div>
+      <div class="header-status" style="display: none"></div>
+      <div class="header-user">
+        <img src="" alt="Avatar" class="user-avatar" id="headerAvatar" />
+        <div class="user-info">
+          <span class="user-name" id="headerName">
+            -- <i class="fa-solid fa-circle user-status-dot"></i>
+          </span>
+          <span class="user-role badge-role" id="headerRole">--</span>
+        </div>
+        <button class="btn-logout" id="btnLogout">
+          <i class="fa-solid fa-right-from-bracket"></i> Thoát
+        </button>
+      </div>
+    </header>
+
+    <main class="app-container">
+      <section class="col-left-prep">
+        <div class="card prep-header-card">
+          <div class="prep-header-content">
+            <div class="icon-box">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+            <div>
+              <h2 class="page-title title-gradient">Chuẩn bị phiên đấu giá</h2>
+              <div class="info-alert mt-1" style="padding: 4px 8px">
+                <i class="fa-solid fa-circle-info text-gold"></i>
+                <span
+                  >Hoàn tất thông tin sản phẩm và kiểm tra trước khi bắt đầu
+                  phiên live.</span
+                >
+              </div>
+            </div>
+          </div>
+          <button class="btn-system-check" id="btnSystemCheck">
+            <i class="fa-solid fa-satellite-dish"></i> Kiểm tra hệ thống
+          </button>
+        </div>
+
+        <div class="card product-list-card">
+          <div class="card-header-styled">
+            <div class="card-title title-gradient">
+              <i class="fa-solid fa-box-open"></i> Danh sách sản phẩm
+            </div>
+            <button class="btn-primary-sm" id="btnAddProduct">
+              <i class="fa-solid fa-plus"></i> Thêm sản phẩm
+            </button>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th width="4%">STT</th>
+                  <th width="7%">Ảnh</th>
+                  <th width="24%">Sản phẩm</th>
+                  <th width="15%">Chất liệu</th>
+                  <th width="16%">Kích thước</th>
+                  <th width="13%">Tình trạng</th>
+                  <th width="12%">Giá KĐ</th>
+                  <th width="9%" class="text-center">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="productListBody">
+                <!-- Data rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-footer-styled">
+            <div class="total-items" id="totalItemsDisplay">
+              Tổng: 0 sản phẩm
+            </div>
+            <div class="pagination">
+              <button class="page-btn">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="col-right-prep">
+        <div class="card profile-card">
+          <div class="profile-cover"></div>
+          <div class="profile-content">
+            <img
+              src=""
+              alt="Đấu giá viên"
+              class="profile-avatar"
+              id="sidebarAvatar"
+            />
+            <h3 class="profile-name" id="sidebarName">--</h3>
+            <p class="profile-role" id="sidebarRole">--</p>
+            <button class="btn-primary-lg" id="btnStartLivePre">
+              <i class="fa-solid fa-play"></i> Mở phiên live
+            </button>
+          </div>
+        </div>
+
+        <div class="card device-check-card">
+          <div class="card-title title-gradient" style="margin-bottom: 10px">
+            <i class="fa-solid fa-laptop-medical"></i> Kiểm tra thiết bị
+          </div>
+
+          <div class="device-grid">
+            <div class="device-btn" id="btnTestCam">
+              <i class="fa-solid fa-camera device-icon" id="camIcon"></i>
+              <video
+                id="camPreview"
+                autoplay
+                playsinline
+                muted
+                style="
+                  display: none;
+                  width: 100%;
+                  height: 60px;
+                  object-fit: cover;
+                  border-radius: 6px;
+                "
+              ></video>
+              <span id="camText">Mở Camera</span>
+            </div>
+            <div class="device-btn" id="btnTestMic">
+              <div class="mic-container">
+                <i class="fa-solid fa-microphone device-icon"></i>
+                <div class="mic-wave" id="micWave" style="display: none"></div>
+              </div>
+              <span id="micText">Mở Mic</span>
+            </div>
+          </div>
+
+          <div class="info-alert mt-2">
+            <i class="fa-solid fa-circle-info text-gold"></i>
+            <span>Sau khi kiểm tra, bạn có thể bắt đầu phiên live.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal Thêm Sản Phẩm -->
+    <div class="modal-overlay" id="addProductModal">
+      <div class="modal-card modal-lg">
+        <h3 class="modal-title text-left mb-2">Thêm thông tin sản phẩm</h3>
+        <form id="addProductForm" class="form-grid">
+          <div class="form-group full-width">
+            <label>Link Hình Ảnh</label>
+            <input type="text" id="p_img" placeholder="https://..." required />
+          </div>
+          <div class="form-group full-width">
+            <label>Tên sản phẩm</label>
+            <input
+              type="text"
+              id="p_name"
+              placeholder="VD: Tượng Rồng Phong Thủy"
+              required
+            />
+          </div>
+          <div class="form-group full-width">
+            <label>Mô tả ngắn</label>
+            <input
+              type="text"
+              id="p_desc"
+              placeholder="VD: Đồng nguyên khối, chạm khắc thủ công"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Chất liệu</label>
+            <input
+              type="text"
+              id="p_material"
+              placeholder="VD: Gỗ trắc, Đồng..."
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Kích thước</label>
+            <input
+              type="text"
+              id="p_size"
+              placeholder="VD: 30cm x 20cm x 25cm"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Tình trạng</label>
+            <input
+              type="text"
+              id="p_condition"
+              placeholder="VD: Mới 100%, Đã qua SD 90%"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Giá khởi điểm (VNĐ)</label>
+            <input
+              type="number"
+              id="p_price"
+              placeholder="VD: 10000000"
+              required
+            />
+          </div>
+
+          <div class="modal-actions full-width mt-2">
+            <button type="button" class="btn-modal-cancel" id="btnCancelAdd">
+              Hủy
+            </button>
+            <button type="submit" class="btn-modal-confirm bg-green">
+              Lưu sản phẩm
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Xác Nhận Xóa -->
+    <div class="modal-overlay" id="deleteModal">
+      <div class="modal-card">
+        <div class="modal-icon logout-icon">
+          <i class="fa-solid fa-trash-can"></i>
+        </div>
+        <h3 class="modal-title">Xác nhận xóa</h3>
+        <p class="modal-message">
+          Bạn có chắc chắn muốn xóa sản phẩm này khỏi danh sách đấu giá?
+        </p>
+        <div class="modal-actions">
+          <button class="btn-modal-cancel" id="btnCancelDelete">Hủy</button>
+          <button class="btn-modal-confirm" id="btnConfirmDelete">
+            Xóa ngay
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Mở Phiên Live -->
+    <div class="modal-overlay" id="startLiveModal">
+      <div class="modal-card">
+        <div class="modal-icon success-icon">
+          <i class="fa-solid fa-satellite-dish"></i>
+        </div>
+        <h3 class="modal-title">Khởi động Live</h3>
+        <p class="modal-message">
+          Thiết bị đã sẵn sàng. Phiên đấu giá sẽ được phát sóng trực tiếp ngay
+          bây giờ!
+        </p>
+        <div class="modal-actions">
+          <button class="btn-modal-cancel" id="btnCancelStart">Hủy</button>
+          <button class="btn-modal-confirm bg-green" id="btnConfirmStart">
+            Phát sóng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Xác Nhận Thoát -->
+    <div class="modal-overlay" id="logoutModal">
+      <div class="modal-card">
+        <div class="modal-icon logout-icon">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </div>
+        <h3 class="modal-title">Xác nhận rời trang</h3>
+        <p class="modal-message" id="logoutModalMessage">
+          Bạn có chắc chắn muốn rời khỏi trang chuẩn bị này không?
+        </p>
+        <div class="modal-actions">
+          <button class="btn-modal-cancel" id="btnCancelLogout">Hủy</button>
+          <button class="btn-modal-confirm" id="btnConfirmLogout">
+            Thoát ngay
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="AuctioneerPrep.js"></script>
+  </body>
+</html>

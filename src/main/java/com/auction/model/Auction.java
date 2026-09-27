@@ -15,6 +15,7 @@ public class Auction {
     private String title;
     private Double startingPrice;
     private Double currentHighestBid;
+    private String currentHighestBidder;
     private String status; // ACTIVE, CLOSED, PENDING
     private LocalDateTime startTime;
     private LocalDateTime endTime;
