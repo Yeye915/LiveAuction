@@ -1,10 +1,11 @@
 package com.auction.controller;
 
 import com.auction.model.Auction;
-import com.auction.service.AuctionService;
+import com.auction.repository.AuctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -12,19 +13,25 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class AuctionController {
     @Autowired
-    private AuctionService auctionService;
+    private AuctionRepository auctionRepository;
 
     @GetMapping
     public ResponseEntity<List<Auction>> getAllAuctions() {
-        return ResponseEntity.ok(auctionService.getAllAuctions());
+        return ResponseEntity.ok(auctionRepository.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Auction> getAuctionById(@PathVariable Long id) {
-        Auction auction = auctionService.getAuctionById(id);
-        if (auction != null) {
-            return ResponseEntity.ok(auction);
-        }
-        return ResponseEntity.notFound().build();
+        return auctionRepository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // Thêm API tạo phòng đấu giá mới
+    @PostMapping
+    public ResponseEntity<Auction> createAuction(@RequestBody Auction auction) {
+        auction.setStatus("ACTIVE");
+        auction.setCurrentHighestBid(auction.getStartingPrice());
+        auction.setStartTime(LocalDateTime.now());
+        Auction savedAuction = auctionRepository.save(auction);
+        return ResponseEntity.ok(savedAuction);
     }
 }
