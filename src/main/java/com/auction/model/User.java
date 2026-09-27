@@ -1,29 +1,27 @@
 package com.auction.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Data                    // Tự động sinh ra Getter, Setter, toString...
-@NoArgsConstructor       // Constructor không tham số
-@AllArgsConstructor      // Constructor đầy đủ tham số
+@Data
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @Column(nullable = false, unique = true)
     private String username;
+    @Column(name = "password_hash")
+    private String passwordHash;
+    @Column(name = "display_name")
+    private String displayName;
 
-    @Column(nullable = false)
-    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role; // CUSTOMER, AUCTIONEER
+    private String avatar;
 
-    @Column(name = "full_name")
-    private String fullName;
-
-    private String role; // Thêm trường role này để phân quyền (BIDDER / AUCTIONEER)
+    public enum Role { CUSTOMER, AUCTIONEER }
 }

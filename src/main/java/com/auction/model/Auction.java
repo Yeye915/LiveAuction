@@ -10,17 +10,38 @@ import java.time.LocalDateTime;
 public class Auction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String title;
-    private Double startingPrice;
-    private Double currentHighestBid;
-    private String currentHighestBidder;
-    private String status; // ACTIVE, CLOSED, PENDING
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    @Column(name = "auction_id")
+    private Long auctionId;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "auctioneer_id")
+    private User auctioneer;
+
+    @Column(name = "start_price")
+    private Double startPrice;
+
+    @Column(name = "price_step")
+    private Double priceStep;
+
+    @Enumerated(EnumType.STRING)
+    private Status status; // PENDING, LIVE, ENDED
+
+    @Column(name = "winning_bid")
+    private Double winningBid;
+
+    @ManyToOne
+    @JoinColumn(name = "winner_id")
+    private User winner;
+
+    @Column(name = "started_at")
+    private LocalDateTime startedAt;
+
+    @Column(name = "ended_at")
+    private LocalDateTime endedAt;
+
+    public enum Status { PENDING, LIVE, ENDED }
 }

@@ -12,60 +12,95 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // Cho phép Front-end gọi API không bị lỗi CORS
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
 
-    // API Đăng ký tài khoản mới
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        // Kiểm tra xem tên đăng nhập đã tồn tại chưa
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", "Tên đăng nhập đã tồn tại trong hệ thống!");
-            return ResponseEntity.badRequest().body(error);
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequest) {
+        try {
+            String username = loginRequest.get("username");
+            String password = loginRequest.get("password");
+
+            if (username == null || password == null) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!"));
+            }
+
+            Optional<User> userOpt = userRepository.findByUsername(username);
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+
+                if (user.getPasswordHash() != null && user.getPasswordHash().equals(password)) {
+                    Map<String, Object> response = new HashMap<>();
+                    response.put("id", user.getUserId());
+                    response.put("username", user.getUsername());
+                    response.put("name", user.getDisplayName());
+                    response.put("displayName", user.getDisplayName());
+
+                    String roleStr = user.getRole() != null ? user.getRole().name() : "CUSTOMER";
+                    if ("CUSTOMER".equals(roleStr)) {
+                        roleStr = "BIDDER";
+                    }
+                    response.put("role", roleStr);
+                    response.put("avatar", user.getAvatar());
+
+                    return ResponseEntity.ok(response);
+                }
+            }
+
+            return ResponseEntity.status(401).body(Map.of("message", "Sai tên đăng nhập hoặc mật khẩu!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Lỗi server: " + e.getMessage()));
         }
-
-        // Mặc định tài khoản đăng ký mới là khách hàng (BIDDER)
-        if (user.getRole() == null || user.getRole().isEmpty()) {
-            user.setRole("BIDDER");
-        }
-
-        // Nếu chưa có full_name thì gán bằng username
-        if (user.getFullName() == null || user.getFullName().isEmpty()) {
-            user.setFullName(user.getUsername());
-        }
-
-        userRepository.save(user);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "Đăng ký thành công!");
-        return ResponseEntity.ok(response);
     }
 
-    // API Đăng nhập hệ thống
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginRequest) {
-        Optional<User> userOpt = userRepository.findByUsername(loginRequest.getUsername());
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody Map<String, String> regRequest) {
+        try {
+            String username = regRequest.get("username");
+            String password = regRequest.get("password");
 
-        if (userOpt.isPresent() && userOpt.get().getPassword().equals(loginRequest.getPassword())) {
-            User user = userOpt.get();
+            String displayName = regRequest.get("displayName");
+            if (displayName == null) {
+                displayName = regRequest.get("name");
+            }
+            if (displayName == null || displayName.trim().isEmpty()) {
+                displayName = username;
+            }
 
+            if (username == null || password == null || username.trim().isEmpty() || password.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Tên đăng nhập và mật khẩu không được để trống!"));
+            }
+
+            if (userRepository.findByUsername(username).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Tên đăng nhập đã tồn tại!"));
+            }
+
+            // Tạo user mới
+            User newUser = new User();
+            newUser.setUsername(username);
+            newUser.setPasswordHash(password);
+            newUser.setDisplayName(displayName);
+            newUser.setRole(User.Role.CUSTOMER); // Mặc định là khách hàng
+            newUser.setAvatar("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80");
+
+            User savedUser = userRepository.save(newUser);
+
+            // ⚠️ Trả về object chứa thông tin user hệt như API login để Front-end tự lưu localStorage và chuyển trang
             Map<String, Object> response = new HashMap<>();
-            response.put("userId", user.getId());
-            response.put("username", user.getUsername());
-            response.put("displayName", user.getFullName() != null ? user.getFullName() : user.getUsername());
-            response.put("role", user.getRole()); // Trả về 'AUCTIONEER' hoặc 'BIDDER' để JS phân quyền
-            response.put("token", "mock-jwt-token-secure");
+            response.put("id", savedUser.getUserId());
+            response.put("username", savedUser.getUsername());
+            response.put("name", savedUser.getDisplayName());
+            response.put("displayName", savedUser.getDisplayName());
+            response.put("role", "BIDDER"); // Khách hàng sẽ được điều hướng vào Bidder.html?id=101
+            response.put("avatar", savedUser.getAvatar());
+            response.put("success", true);
 
             return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Lỗi đăng ký: " + e.getMessage()));
         }
-
-        Map<String, String> error = new HashMap<>();
-        error.put("message", "Tên đăng nhập hoặc mật khẩu không chính xác!");
-        return ResponseEntity.status(401).body(error);
     }
 }
