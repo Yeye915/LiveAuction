@@ -1,7 +1,7 @@
 // ==========================================
-// Cấu hình URL Backend API
+// Cấu hình URL Backend API (Tự động thích ứng với localhost và Ngrok)
 // ==========================================
-const API_BASE_URL = "http://localhost:8080/api/auth";
+const API_BASE_URL = "/api/auth";
 
 document.addEventListener("DOMContentLoaded", () => {
   const tabLogin = document.getElementById("tabLogin");

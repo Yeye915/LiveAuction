@@ -58,11 +58,11 @@ let localStream = null;
 let isCamOn = false;
 
 // ==========================================
-// FETCH DỮ LIỆU THẬT TỪ SPRING BOOT BACKEND
+// FETCH DỮ LIỆU THẬT TỪ SPRING BOOT BACKEND (HỖ TRỢ NGROK)
 // ==========================================
 async function fetchAuctionDataFromBackend() {
   try {
-    const response = await fetch(`http://localhost:8080/api/auctions/${auctionId}`);
+    const response = await fetch(`/api/auctions/${auctionId}`);
     if (response.ok) {
       const auction = await response.json();
 
@@ -93,15 +93,26 @@ async function fetchAuctionDataFromBackend() {
 }
 
 // ==========================================
-// FETCH TIN NHẮN CHAT TỪ SERVER (LỌC THEO TYPE)
+// FETCH TIN NHẮN CHAT TỪ SERVER (HỖ TRỢ CẢ PUBLIC VÀ PRIVATE)
 // ==========================================
 async function fetchChatMessages() {
   try {
-    // Chỉ lấy tin nhắn chung (public) từ Backend để hiển thị khung chat chung
-    const response = await fetch(`http://localhost:8080/api/chats/${auctionId}?type=public`);
+    let url = `/api/chats/${auctionId}?type=public`;
+
+    // Nếu đang ở tab chat riêng, lấy tin nhắn trao đổi giữa khách hàng này với Admin
+    if (currentTab === "private") {
+      const myId = bidderState.currentUser.id || "user_me";
+      url = `/api/chats/${auctionId}?type=private&userId=${myId}&targetId=admin`;
+    }
+
+    const response = await fetch(url);
     if (response.ok) {
       const messages = await response.json();
-      bidderState.publicChatMessages = messages;
+      if (currentTab === "public") {
+        bidderState.publicChatMessages = messages;
+      } else {
+        bidderState.privateChats["admin"] = messages;
+      }
       renderChat();
     }
   } catch (error) {
@@ -275,8 +286,8 @@ function renderChat() {
   let messagesToRender = [];
   if (currentTab === "public") {
     messagesToRender = bidderState.publicChatMessages;
-  } else if (selectedPrivateUser) {
-    messagesToRender = bidderState.privateChats[selectedPrivateUser.id] || [];
+  } else {
+    messagesToRender = bidderState.privateChats["admin"] || [];
   }
 
   const userName = bidderState.currentUser.name || bidderState.currentUser.fullName || bidderState.currentUser.username || "Bạn";
@@ -419,19 +430,19 @@ function setupChatControls() {
       avatar: userAvatar,
       text: text,
       time: getCurrentTime(),
-      type: currentTab // ⚠️ Gửi kèm loại tin nhắn ("public" hoặc "private") lên Backend
+      type: currentTab,
+      recipientId: currentTab === "private" ? "admin" : null // Gửi kèm định danh người nhận là admin nếu là chat riêng
     };
 
     try {
-      // Gửi tin nhắn lên Backend Spring Boot
-      await fetch('http://localhost:8080/api/chats', {
+      await fetch('/api/chats', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(newMsg)
       });
 
       input.value = "";
-      fetchChatMessages(); // Tải lại ngay lập tức sau khi gửi
+      fetchChatMessages();
     } catch (error) {
       console.error("Lỗi gửi tin nhắn:", error);
     }
@@ -442,7 +453,7 @@ function switchChatTab(tab) {
   currentTab = tab;
   document.getElementById("tabPublic")?.classList.toggle("active", tab === "public");
   document.getElementById("tabPrivate")?.classList.toggle("active", tab === "private");
-  renderChat();
+  fetchChatMessages(); // Gọi lại fetch ngay khi chuyển tab để cập nhật khung chat tương ứng
 }
 
 window.addBidStep = function (step) {
@@ -473,9 +484,8 @@ function setupBidAndModalEvents() {
 
       const userName = bidderState.currentUser.name || bidderState.currentUser.fullName || bidderState.currentUser.username || "Khách hàng";
 
-      // GỬI LƯỢT RA GIÁ KÈM THEO USERNAME LÊN BACKEND SPRING BOOT
       try {
-        const response = await fetch('http://localhost:8080/api/bids', {
+        const response = await fetch('/api/bids', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -535,7 +545,6 @@ function setupBidAndModalEvents() {
     btnCloseBidModal.addEventListener("click", () => bidSuccessModal.classList.remove("active"));
   }
 
-  // Nút đăng xuất
   document.getElementById("btnLogout")?.addEventListener("click", () => {
     localStorage.removeItem('currentUser');
     window.location.href = '/auth/Auth.html';
@@ -545,9 +554,8 @@ function setupBidAndModalEvents() {
 // Khởi chạy ứng dụng khi DOM sẵn sàng
 window.addEventListener("DOMContentLoaded", () => {
   fetchAuctionDataFromBackend();
-  fetchChatMessages(); // Tải tin nhắn lần đầu khi vào trang
+  fetchChatMessages();
 
-  // Tự động đồng bộ giá đấu và tin nhắn mỗi 3 giây cho mọi client
   setInterval(() => {
     fetchAuctionDataFromBackend();
     fetchChatMessages();

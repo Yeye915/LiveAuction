@@ -42,25 +42,26 @@ const auctionState = {
       time: "Vừa xong",
     }
   ],
-  participants: [],
+  privateChats: {},
+  participants: [], // Lấy động từ Database
 };
 
-// Lấy ID phòng đấu giá từ URL (Mặc định là 101 để đồng bộ với Bidder)
+// Lấy ID phòng đấu giá từ URL
 const urlParams = new URLSearchParams(window.location.search);
 const auctionId = urlParams.get('id') || 101;
 
 let currentTab = "history"; // 'history' hoặc 'chat'
+let chatTab = "public"; // "public" hoặc "private"
+let selectedPrivateUser = null;
 
 // ==========================================
-// FETCH DỮ LIỆU THẬT TỪ SPRING BOOT BACKEND
+// FETCH DỮ LIỆU TỪ SERVER (HỖ TRỢ CẢ NGROK)
 // ==========================================
 async function fetchAuctionDataFromBackend() {
   try {
-    const response = await fetch(`http://localhost:8080/api/auctions/${auctionId}`);
+    const response = await fetch(`/api/auctions/${auctionId}`);
     if (response.ok) {
       const auction = await response.json();
-
-      // Cập nhật giá hiện tại và thông tin người dẫn đầu nếu có từ DB
       auctionState.leader.amount = auction.currentHighestBid || auction.startingPrice || 0;
 
       if (auction.currentHighestBidder) {
@@ -75,27 +76,51 @@ async function fetchAuctionDataFromBackend() {
           { label: "Trạng thái:", value: auction.status, icon: "fa-solid fa-circle-info" }
         ];
       }
-
-      // Cập nhật lại toàn bộ giao diện sau khi lấy dữ liệu mới
       renderAllUI();
-    } else {
-      console.warn("Không tìm thấy phiên đấu giá với ID:", auctionId);
     }
   } catch (error) {
     console.error("Lỗi kết nối tới Server Spring Boot:", error);
   }
 }
 
-// ==========================================
-// FETCH TIN NHẮN CHAT TỪ SERVER (LỌC THEO TYPE)
-// ==========================================
+// Lấy danh sách người tham gia từ Database qua API
+async function fetchParticipantsFromBackend() {
+  try {
+    const response = await fetch('/api/users');
+    if (response.ok) {
+      const users = await response.json();
+      auctionState.participants = users.map((u, index) => ({
+        id: u.userId ? u.userId.toString() : "user_" + index,
+        name: u.displayName || u.username,
+        avatar: u.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80",
+        rank: index + 1
+      }));
+      renderParticipants();
+      if (typeof renderPrivateUserList === 'function' && chatTab === "private" && !selectedPrivateUser) {
+        renderPrivateUserList();
+      }
+    }
+  } catch (error) {
+    console.error("Lỗi tải danh sách người tham gia từ CSDL:", error);
+  }
+}
+
 async function fetchChatMessages() {
   try {
-    // Chỉ lấy tin nhắn chung (public) để hiển thị lên khung chat của Admin
-    const response = await fetch(`http://localhost:8080/api/chats/${auctionId}?type=public`);
+    let url = `/api/chats/${auctionId}?type=public`;
+    if (chatTab === "private" && selectedPrivateUser) {
+      const myId = auctionState.auctioneer.id || "auc_me";
+      url = `/api/chats/${auctionId}?type=private&userId=${myId}&targetId=${selectedPrivateUser.id}`;
+    }
+
+    const response = await fetch(url);
     if (response.ok) {
       const messages = await response.json();
-      auctionState.publicChatMessages = messages;
+      if (chatTab === "public") {
+        auctionState.publicChatMessages = messages;
+      } else if (selectedPrivateUser) {
+        auctionState.privateChats[selectedPrivateUser.id] = messages;
+      }
       renderChat();
     }
   } catch (error) {
@@ -119,7 +144,7 @@ function getCurrentTime() {
 }
 
 // ==========================================
-// DYNAMIC UI RENDERERS
+// RENDER UI
 // ==========================================
 function renderHeader() {
   const nameEl = document.getElementById("auctioneerName");
@@ -260,9 +285,16 @@ function renderChat() {
   const container = document.getElementById("chatContainer");
   if (!container) return;
 
+  let messagesToRender = [];
+  if (chatTab === "public") {
+    messagesToRender = auctionState.publicChatMessages;
+  } else if (selectedPrivateUser) {
+    messagesToRender = auctionState.privateChats[selectedPrivateUser.id] || [];
+  }
+
   const auctioneerName = auctionState.auctioneer.name || "Đấu giá viên";
 
-  container.innerHTML = auctionState.publicChatMessages
+  container.innerHTML = messagesToRender
       .map((msg) => {
         const isSelf = msg.senderId === auctionState.auctioneer.id;
         return `
@@ -283,6 +315,58 @@ function renderChat() {
   container.scrollTop = container.scrollHeight;
 }
 
+// Giao diện hộp thư Messenger chuẩn cho danh sách chat riêng của Admin
+function renderPrivateUserList() {
+  const container = document.getElementById("privateUserListContainer");
+  if (!container) return;
+
+  if (auctionState.participants.length === 0) {
+    container.innerHTML = `<div style="padding: 12px; color: #9ca3af; font-size: 12px; text-align: center;">Chưa có khách hàng nào trong phòng.</div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="font-weight: 700; margin-bottom: 8px; font-size: 12px; color: #374151; padding: 0 4px;">Hộp thư khách hàng (${auctionState.participants.length})</div>
+    <div style="display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto;" id="userSelectionList">
+      ${auctionState.participants.map(p => {
+    const isSelected = selectedPrivateUser?.id === p.id;
+    return `
+          <div class="user-option-item" data-id="${p.id}" data-name="${p.name}" data-avatar="${p.avatar}" 
+               style="display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: ${isSelected ? '#eff6ff' : '#ffffff'}; border-radius: 8px; cursor: pointer; border: 1px solid ${isSelected ? '#3b82f6' : '#f3f4f6'}; transition: all 0.2s;">
+            <div style="position: relative;">
+              <img src="${p.avatar}" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+              <span style="position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background: #22c55e; border: 2px solid #fff; border-radius: 50%;"></span>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 13px; font-weight: 600; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+              <div style="font-size: 11px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Bấm để xem tin nhắn riêng...</div>
+            </div>
+          </div>
+        `;
+  }).join('')}
+    </div>
+  `;
+
+  container.querySelectorAll('.user-option-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = item.getAttribute('data-id');
+      const name = item.getAttribute('data-name');
+      const avatar = item.getAttribute('data-avatar');
+      selectPrivateUser(id, name, avatar);
+    });
+  });
+}
+
+function selectPrivateUser(id, name, avatar) {
+  selectedPrivateUser = { id, name, avatar };
+  const container = document.getElementById("privateUserListContainer");
+  if (container) {
+    // Ẩn hoàn toàn thanh thông báo "Đang chat với..." đi sau khi chọn
+    container.style.display = "none";
+  }
+  fetchChatMessages();
+}
+
 function renderParticipants() {
   const container = document.getElementById("participantsContainer");
   const countBadge = document.getElementById("participantCount");
@@ -293,17 +377,29 @@ function renderParticipants() {
   container.innerHTML = auctionState.participants
       .map((p) => {
         return `
-        <div class="participant-item">
+        <div class="participant-item participant-click-item" data-id="${p.id}" data-name="${p.name}" data-avatar="${p.avatar}" style="cursor: pointer;" title="Bấm để chat riêng">
           <div class="rank-num">${p.rank || 1}</div>
           <img src="${p.avatar}" alt="${p.name}" class="participant-avatar">
           <div class="participant-info">
             <div class="participant-name">${p.name}</div>
           </div>
-          <i class="fa-solid fa-video cam-on cam-status-icon"></i>
+          <i class="fa-solid fa-comments" style="color: var(--primary-accent); font-size: 11px;"></i>
         </div>
       `;
       })
       .join("");
+
+  container.querySelectorAll('.participant-click-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = item.getAttribute('data-id');
+      const name = item.getAttribute('data-name');
+      const avatar = item.getAttribute('data-avatar');
+
+      document.getElementById("tabChat")?.click();
+      switchChatTab("private");
+      selectPrivateUser(id, name, avatar);
+    });
+  });
 }
 
 function renderAllUI() {
@@ -317,7 +413,7 @@ function renderAllUI() {
 }
 
 // ==========================================
-// TAB SWITCHER & CHAT
+// TAB SWITCHER & CHAT CONTROLS
 // ==========================================
 function setupTabSwitcher() {
   const tabHistory = document.getElementById("tabHistory");
@@ -326,14 +422,14 @@ function setupTabSwitcher() {
   const chatView = document.getElementById("chatView");
 
   if (tabHistory && tabChat) {
-    tabHistory.addEventListener("click", () => switchTab("history"));
-    tabChat.addEventListener("click", () => switchTab("chat"));
+    tabHistory.addEventListener("click", () => switchMainTab("history"));
+    tabChat.addEventListener("click", () => switchMainTab("chat"));
   }
 
-  function switchTab(tab) {
+  function switchMainTab(tab) {
     currentTab = tab;
-    tabHistory.classList.toggle("active", tab === "history");
-    tabChat.classList.toggle("active", tab === "chat");
+    tabHistory?.classList.toggle("active", tab === "history");
+    tabChat?.classList.toggle("active", tab === "chat");
 
     if (historyView && chatView) {
       historyView.classList.toggle("active", tab === "history");
@@ -347,11 +443,20 @@ function setupTabSwitcher() {
     }
   }
 
+  document.getElementById("tabPublic")?.addEventListener("click", () => switchChatTab("public"));
+  document.getElementById("tabPrivate")?.addEventListener("click", () => switchChatTab("private"));
+
+  // Gửi tin nhắn (Hỗ trợ cả Public và Private gửi lên Backend)
   document.getElementById("chatForm")?.addEventListener("submit", async function (e) {
     e.preventDefault();
     const input = document.getElementById("chatInput");
     const text = input?.value.trim();
     if (!text) return;
+
+    if (chatTab === "private" && !selectedPrivateUser) {
+      alert("Vui lòng chọn một khách hàng để chat riêng!");
+      return;
+    }
 
     const auctioneerName = auctionState.auctioneer.name || "Đấu giá viên";
     const userAvatar = auctionState.auctioneer.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80";
@@ -363,78 +468,80 @@ function setupTabSwitcher() {
       avatar: userAvatar,
       text: text,
       time: getCurrentTime(),
-      type: "public" // ⚠️ Gắn type public cho tin nhắn của admin
+      type: chatTab,
+      recipientId: chatTab === "private" ? selectedPrivateUser.id : null
     };
 
     try {
-      // Gửi tin nhắn lên Backend Spring Boot
-      await fetch('http://localhost:8080/api/chats', {
+      await fetch('/api/chats', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(newMsg)
       });
-
       input.value = "";
-      fetchChatMessages(); // Tải lại ngay lập tức sau khi gửi
+      fetchChatMessages();
     } catch (error) {
       console.error("Lỗi gửi tin nhắn:", error);
     }
   });
 }
 
-// ==========================================
-// SLIDESHOWS & CAMERA
-// ==========================================
-let currentSlideLeft = 0;
-let currentStreamSlide = 0;
+function switchChatTab(tab) {
+  chatTab = tab;
+  const tabPub = document.getElementById("tabPublic");
+  const tabPriv = document.getElementById("tabPrivate");
+  if (tabPub) tabPub.classList.toggle("active", tab === "public");
+  if (tabPriv) tabPriv.classList.toggle("active", tab === "private");
 
+  const privateListContainer = document.getElementById("privateUserListContainer");
+  if (privateListContainer) {
+    if (tab === "private") {
+      // Nếu chưa chọn ai thì hiển thị danh sách, nếu đã chọn người chat rồi thì ẩn hộp thông báo đi
+      if (!selectedPrivateUser) {
+        privateListContainer.style.display = "block";
+        renderPrivateUserList();
+      } else {
+        privateListContainer.style.display = "none";
+      }
+    } else {
+      privateListContainer.style.display = "none";
+    }
+  }
+  fetchChatMessages();
+}
+
+// ==========================================
+// SETUP KHÁC (SLIDESHOW, CAMERA, MODAL)
+// ==========================================
 function setupSlideshows() {
   setInterval(() => {
     const images = auctionState.product.images || [];
     if (images.length === 0) return;
+    let currentSlideLeft = 0;
     currentSlideLeft = (currentSlideLeft + 1) % images.length;
     const track = document.getElementById("sliderTrack");
     const indicators = document.querySelectorAll("#sliderIndicators .indicator");
-
     if (track) track.style.transform = `translateX(-${currentSlideLeft * (100 / images.length)}%)`;
     indicators.forEach((ind, idx) => ind.classList.toggle("active", idx === currentSlideLeft));
-  }, 3500);
-
-  setInterval(() => {
-    const images = auctionState.product.images || [];
-    if (images.length === 0) return;
-    currentStreamSlide = (currentStreamSlide + 1) % images.length;
-    const track = document.getElementById("streamSlideshowTrack");
-    const indicators = document.querySelectorAll("#streamSliderIndicators .stream-indicator");
-
-    if (track) track.style.transform = `translateX(-${currentStreamSlide * (100 / images.length)}%)`;
-    indicators.forEach((ind, idx) => ind.classList.toggle("active", idx === currentStreamSlide));
   }, 3500);
 }
 
 let localStream = null;
 let isCamOn = false;
-let isMicOn = false;
-
-const toggleCamBtn = document.getElementById("toggleCamera");
-const toggleMicBtn = document.getElementById("toggleMic");
-const webcamVideo = document.getElementById("webcamVideo");
-const streamSlideshow = document.getElementById("streamSlideshow");
 
 async function startCamera() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    localStream.getAudioTracks().forEach((track) => (track.enabled = isMicOn));
-
+    const webcamVideo = document.getElementById("webcamVideo");
+    const streamSlideshow = document.getElementById("streamSlideshow");
     if (webcamVideo) {
       webcamVideo.srcObject = localStream;
       webcamVideo.classList.remove("hidden");
     }
-    if (streamSlideshow) streamSlideshow.classList.remove("active");
+    if (streamSlideshow) streamSlideshow.classList.add("active");
   } catch (err) {
-    alert("Không thể mở Webcam! Vui lòng cấp quyền thiết bị.");
+    alert("Không thể mở Webcam!");
     isCamOn = false;
-    updateCamUI();
   }
 }
 
@@ -442,61 +549,33 @@ function stopCamera() {
   if (localStream) {
     localStream.getVideoTracks().forEach((track) => track.stop());
   }
+  const webcamVideo = document.getElementById("webcamVideo");
+  const streamSlideshow = document.getElementById("streamSlideshow");
   if (webcamVideo) {
     webcamVideo.classList.add("hidden");
     webcamVideo.srcObject = null;
   }
-  if (streamSlideshow) streamSlideshow.classList.add("active");
-}
-
-function updateCamUI() {
-  if (!toggleCamBtn) return;
-  if (isCamOn) {
-    toggleCamBtn.classList.add("active");
-    toggleCamBtn.innerHTML = '<i class="fa-solid fa-video"></i>';
-  } else {
-    toggleCamBtn.classList.remove("active");
-    toggleCamBtn.innerHTML = '<i class="fa-solid fa-video-slash"></i>';
-  }
+  if (streamSlideshow) streamSlideshow.classList.remove("active");
 }
 
 function setupMediaControls() {
+  const toggleCamBtn = document.getElementById("toggleCamera");
   if (toggleCamBtn) {
-    stopCamera();
     toggleCamBtn.addEventListener("click", async () => {
       isCamOn = !isCamOn;
-      updateCamUI();
+      toggleCamBtn.classList.toggle("active", isCamOn);
+      toggleCamBtn.innerHTML = `<i class="fa-solid ${isCamOn ? 'fa-video' : 'fa-video-slash'}"></i>`;
       if (isCamOn) await startCamera();
       else stopCamera();
     });
   }
-
-  if (toggleMicBtn) {
-    toggleMicBtn.addEventListener("click", () => {
-      isMicOn = !isMicOn;
-      if (localStream) {
-        localStream.getAudioTracks().forEach((track) => (track.enabled = isMicOn));
-      }
-      if (isMicOn) {
-        toggleMicBtn.classList.add("active");
-        toggleMicBtn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
-      } else {
-        toggleMicBtn.classList.remove("active");
-        toggleMicBtn.innerHTML = '<i class="fa-solid fa-microphone-slash"></i>';
-      }
-    });
-  }
 }
 
-// ==========================================
-// SESSION CONTROLS & MODALS
-// ==========================================
 function setupSessionControls() {
   const btnPauseSession = document.getElementById("btnPauseSession");
   const pauseModal = document.getElementById("pauseModal");
   const btnCancelPause = document.getElementById("btnCancelPause");
   const btnConfirmPause = document.getElementById("btnConfirmPause");
-  const sessionLiveBadge = document.getElementById("sessionLiveBadge");
 
   if (btnPauseSession && pauseModal) {
     btnPauseSession.addEventListener("click", () => pauseModal.classList.add("active"));
@@ -508,31 +587,6 @@ function setupSessionControls() {
     btnConfirmPause.addEventListener("click", () => {
       auctionState.session.isPaused = !auctionState.session.isPaused;
       pauseModal.classList.remove("active");
-
-      if (auctionState.session.isPaused) {
-        document.body.classList.add("session-paused");
-        btnPauseSession.classList.add("is-paused");
-        btnPauseSession.innerHTML = '<i class="fa-solid fa-play"></i> Tiếp tục phiên';
-        sessionLiveBadge.classList.add("paused");
-        sessionLiveBadge.innerHTML = '<i class="fa-solid fa-pause"></i> TẠM DỪNG';
-      } else {
-        document.body.classList.remove("session-paused");
-        btnPauseSession.classList.remove("is-paused");
-        btnPauseSession.innerHTML = '<i class="fa-solid fa-pause"></i> Tạm dừng phiên';
-        sessionLiveBadge.classList.remove("paused");
-        sessionLiveBadge.innerHTML = '<i class="fa-solid fa-circle dot pulsing-dot"></i> LIVE';
-      }
-    });
-  }
-
-  const btnFullscreen = document.getElementById("btnFullscreen");
-  const appContainer = document.getElementById("appContainer");
-
-  if (btnFullscreen && appContainer) {
-    btnFullscreen.addEventListener("click", () => {
-      appContainer.classList.toggle("stream-maximized");
-      const icon = btnFullscreen.querySelector("i");
-      icon.className = appContainer.classList.contains("stream-maximized") ? "fa-solid fa-compress" : "fa-solid fa-expand";
     });
   }
 }
@@ -557,15 +611,16 @@ function setupHammerModal() {
   }
 }
 
-// Khởi chạy ứng dụng khi DOM sẵn sàng
+// Khởi chạy ứng dụng và tự động gọi API từ Database
 window.addEventListener("DOMContentLoaded", () => {
   fetchAuctionDataFromBackend();
-  fetchChatMessages(); // Tải tin nhắn lần đầu khi vào trang
+  fetchChatMessages();
+  fetchParticipantsFromBackend();
 
-  // Tự động gọi API cập nhật giá đấu và tin nhắn chat mỗi 3 giây
   setInterval(() => {
     fetchAuctionDataFromBackend();
     fetchChatMessages();
+    fetchParticipantsFromBackend();
   }, 3000);
 
   setupTabSwitcher();

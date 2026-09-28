@@ -1,332 +1,346 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Elite Auction - UI Đấu Giá Viên</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elite Auction - UI Đấu Giá Viên</title>
 
-    <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+  />
 
-    <!-- Font Awesome Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="Auctioneer.css" />
-  </head>
-  <body>
-    <!-- Header chuẩn phong cách Elite Auction -->
-    <header class="app-header">
-      <div class="logo-area">
-        <i class="fa-solid fa-gavel logo-icon"></i>
-        <div>
-          <h1 class="brand-title">Elite Auction</h1>
-          <p class="brand-subtitle">
-            Tinh hoa sưu tầm · Giá trị vượt thời gian
-          </p>
-        </div>
-      </div>
+  <!-- Font Awesome Icons -->
+  <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <link rel="stylesheet" href="Auctioneer.css" />
+</head>
+<body>
+<!-- Header chuẩn phong cách Elite Auction -->
+<header class="app-header">
+  <div class="logo-area">
+    <i class="fa-solid fa-gavel logo-icon"></i>
+    <div>
+      <h1 class="brand-title">Elite Auction</h1>
+      <p class="brand-subtitle">
+        Tinh hoa sưu tầm · Giá trị vượt thời gian
+      </p>
+    </div>
+  </div>
 
-      <div class="header-status">
+  <div class="header-status">
         <span class="live-badge-header" id="sessionLiveBadge">
           <i class="fa-solid fa-circle dot pulsing-dot"></i> LIVE
         </span>
-        <span class="time-counter" id="liveTimeCounter">
+    <span class="time-counter" id="liveTimeCounter">
           <i class="fa-regular fa-clock"></i> --
         </span>
-      </div>
+  </div>
 
-      <div class="header-user">
-        <img
-          src=""
-          alt="Avatar Đấu giá viên"
-          class="user-avatar"
-          id="auctioneerAvatar"
-        />
-        <div class="user-info">
+  <div class="header-user">
+    <img
+            src=""
+            alt="Avatar Đấu giá viên"
+            class="user-avatar"
+            id="auctioneerAvatar"
+    />
+    <div class="user-info">
           <span class="user-name" id="auctioneerName">
             -- <i class="fa-solid fa-circle user-status-dot"></i>
           </span>
-          <span class="user-role badge-role" id="auctioneerRole">--</span>
-        </div>
-        <button class="btn-pause-session" id="btnPauseSession">
-          <i class="fa-solid fa-pause"></i> Tạm dừng phiên
-        </button>
+      <span class="user-role badge-role" id="auctioneerRole">--</span>
+    </div>
+    <button class="btn-pause-session" id="btnPauseSession">
+      <i class="fa-solid fa-pause"></i> Tạm dừng phiên
+    </button>
+  </div>
+</header>
+
+<!-- Main App Container -->
+<main class="app-container" id="appContainer">
+  <!-- Cột Left: Thông tin sản phẩm & Điều khiển gõ búa -->
+  <section class="col-left">
+    <!-- Product Info Card -->
+    <div class="card product-card">
+      <div class="card-title title-gradient">
+        <i class="fa-solid fa-box-archive"></i> Thông tin sản phẩm
       </div>
-    </header>
 
-    <!-- Main App Container -->
-    <main class="app-container" id="appContainer">
-      <!-- Cột Left: Thông tin sản phẩm & Điều khiển gõ búa -->
-      <section class="col-left">
-        <!-- Product Info Card -->
-        <div class="card product-card">
-          <div class="card-title title-gradient">
-            <i class="fa-solid fa-box-archive"></i> Thông tin sản phẩm
-          </div>
+      <div class="product-slider-container">
+        <div class="product-slider-track" id="sliderTrack"></div>
+        <div class="slider-indicators" id="sliderIndicators"></div>
+      </div>
 
-          <div class="product-slider-container">
-            <div class="product-slider-track" id="sliderTrack"></div>
-            <div class="slider-indicators" id="sliderIndicators"></div>
-          </div>
+      <div class="product-details">
+        <div class="product-header">
+          <h3 id="productTitle">--</h3>
+          <span class="tag-unique" id="productTag">--</span>
+        </div>
+        <p class="product-desc" id="productDesc">--</p>
+        <div class="product-specs" id="productSpecs"></div>
+      </div>
+    </div>
 
-          <div class="product-details">
-            <div class="product-header">
-              <h3 id="productTitle">--</h3>
-              <span class="tag-unique" id="productTag">--</span>
-            </div>
-            <p class="product-desc" id="productDesc">--</p>
-            <div class="product-specs" id="productSpecs"></div>
+    <!-- Auctioneer Control Card -->
+    <div class="card control-card">
+      <div class="card-title title-gradient">
+        <i class="fa-solid fa-gavel"></i> Điều khiển phiên
+      </div>
+
+      <div class="current-price-box">
+        <span class="price-label">Giá hiện tại</span>
+        <h2 class="price-value" id="currentPriceDisplay">
+          -- <i class="fa-solid fa-arrow-up trend-icon"></i>
+        </h2>
+      </div>
+
+      <div class="leader-info-box">
+        <span class="leader-label">Người đang đứng giá</span>
+        <div class="leader-profile">
+          <img src="" alt="Leader Avatar" id="leaderAvatar" />
+          <div>
+            <div class="leader-name" id="leaderName">--</div>
+            <div class="leader-bid" id="leaderBid">--</div>
           </div>
         </div>
+      </div>
 
-        <!-- Auctioneer Control Card -->
-        <div class="card control-card">
-          <div class="card-title title-gradient">
-            <i class="fa-solid fa-gavel"></i> Điều khiển phiên
-          </div>
+      <button class="btn-hammer-submit" id="btnHammerSubmit">
+        <i class="fa-solid fa-gavel"></i> Gõ búa chốt giá
+      </button>
+    </div>
+  </section>
 
-          <div class="current-price-box">
-            <span class="price-label">Giá hiện tại</span>
-            <h2 class="price-value" id="currentPriceDisplay">
-              -- <i class="fa-solid fa-arrow-up trend-icon"></i>
-            </h2>
-          </div>
-
-          <div class="leader-info-box">
-            <span class="leader-label">Người đang đứng giá</span>
-            <div class="leader-profile">
-              <img src="" alt="Leader Avatar" id="leaderAvatar" />
-              <div>
-                <div class="leader-name" id="leaderName">--</div>
-                <div class="leader-bid" id="leaderBid">--</div>
-              </div>
-            </div>
-          </div>
-
-          <button class="btn-hammer-submit" id="btnHammerSubmit">
-            <i class="fa-solid fa-gavel"></i> Gõ búa chốt giá
-          </button>
-        </div>
-      </section>
-
-      <!-- Cột Middle: Stream Live & (Khung Lịch sử/Chat + Thống kê phiên) -->
-      <section class="col-middle">
-        <!-- Stream Video Main -->
-        <div class="main-stream-card" id="mainStreamCard">
-          <div class="video-overlay-top">
+  <!-- Cột Middle: Stream Live & (Khung Lịch sử/Chat + Thống kê phiên) -->
+  <section class="col-middle">
+    <!-- Stream Video Main -->
+    <div class="main-stream-card" id="mainStreamCard">
+      <div class="video-overlay-top">
             <span class="badge-views" id="streamViewsBadge">
               <i class="fa-regular fa-eye"></i> --
             </span>
-          </div>
+      </div>
 
-          <!-- Video Stream Thật từ Webcam -->
-          <video
-            id="webcamVideo"
-            autoplay
-            playsinline
-            muted
-            class="webcam-stream hidden"
-          ></video>
+      <!-- Video Stream Thật từ Webcam -->
+      <video
+              id="webcamVideo"
+              autoplay
+              playsinline
+              muted
+              class="webcam-stream hidden"
+      ></video>
 
-          <!-- Trình chiếu Slideshow Ảnh Sản Phẩm khi Tắt Camera -->
-          <div class="stream-slideshow-container" id="streamSlideshow">
-            <div class="stream-slideshow-track" id="streamSlideshowTrack"></div>
-            <div
-              class="stream-slider-indicators"
-              id="streamSliderIndicators"
-            ></div>
-            <div class="cam-off-badge">
-              <i class="fa-solid fa-camera-retro"></i> Đang hiển thị sản phẩm
+      <!-- Trình chiếu Slideshow Ảnh Sản Phẩm khi Tắt Camera -->
+      <div class="stream-slideshow-container" id="streamSlideshow">
+        <div class="stream-slideshow-track" id="streamSlideshowTrack"></div>
+        <div
+                class="stream-slider-indicators"
+                id="streamSliderIndicators"
+        ></div>
+        <div class="cam-off-badge">
+          <i class="fa-solid fa-camera-retro"></i> Đang hiển thị sản phẩm
+        </div>
+      </div>
+
+      <!-- Overlay thông tin người đang ra giá hiện tại -->
+      <div class="stream-bottom-left-bar">
+        <div class="stream-leader-profile">
+          <i class="fa-solid fa-crown stream-crown-icon"></i>
+          <img src="" alt="Highest Bidder" id="highestBidderAvatar" />
+          <div class="stream-leader-meta">
+            <div class="leader-name-stream" id="highestBidderName">--</div>
+            <div class="leader-price-stream" id="highestBidderPrice">
+              --
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- Overlay thông tin người đang ra giá hiện tại -->
-          <div class="stream-bottom-left-bar">
-            <div class="stream-leader-profile">
-              <i class="fa-solid fa-crown stream-crown-icon"></i>
-              <img src="" alt="Highest Bidder" id="highestBidderAvatar" />
-              <div class="stream-leader-meta">
-                <div class="leader-name-stream" id="highestBidderName">--</div>
-                <div class="leader-price-stream" id="highestBidderPrice">
-                  --
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Thanh điều khiển thiết bị Cam / Mic & Thu phóng -->
+      <div class="stream-controls">
+        <button
+                class="btn-media-ctrl"
+                id="toggleCamera"
+                title="Bật/Tắt Camera"
+        >
+          <i class="fa-solid fa-video-slash"></i>
+        </button>
+        <button class="btn-media-ctrl" id="toggleMic" title="Bật/Tắt Micro">
+          <i class="fa-solid fa-microphone-slash"></i>
+        </button>
+        <button
+                class="btn-fullscreen"
+                id="btnFullscreen"
+                title="Phóng to / Thu nhỏ"
+        >
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </div>
 
-          <!-- Thanh điều khiển thiết bị Cam / Mic & Thu phóng -->
-          <div class="stream-controls">
+    <!-- Khung dưới: Lịch sử ra giá / Phòng chat & Thống kê phiên -->
+    <div class="middle-bottom-grid">
+      <!-- Card chuyển đổi linh hoạt Lịch sử ra giá & Phòng chat -->
+      <div class="card history-chat-card">
+        <div class="tab-header-area">
+          <div class="tabs-nav">
             <button
-              class="btn-media-ctrl"
-              id="toggleCamera"
-              title="Bật/Tắt Camera"
+                    class="tab-btn active"
+                    id="tabHistory"
+                    data-tab="history"
             >
-              <i class="fa-solid fa-video-slash"></i>
+              <i class="fa-solid fa-chart-line"></i> Lịch sử ra giá
             </button>
-            <button class="btn-media-ctrl" id="toggleMic" title="Bật/Tắt Micro">
-              <i class="fa-solid fa-microphone-slash"></i>
-            </button>
-            <button
-              class="btn-fullscreen"
-              id="btnFullscreen"
-              title="Phóng to / Thu nhỏ"
-            >
-              <i class="fa-solid fa-expand"></i>
+            <button class="tab-btn" id="tabChat" data-tab="chat">
+              <i class="fa-regular fa-comments"></i> Phòng chat
             </button>
           </div>
         </div>
 
-        <!-- Khung dưới: Lịch sử ra giá / Phòng chat & Thống kê phiên -->
-        <div class="middle-bottom-grid">
-          <!-- Card chuyển đổi linh hoạt Lịch sử ra giá & Phòng chat -->
-          <div class="card history-chat-card">
-            <div class="tab-header-area">
-              <div class="tabs-nav">
-                <button
-                  class="tab-btn active"
-                  id="tabHistory"
-                  data-tab="history"
-                >
-                  <i class="fa-solid fa-chart-line"></i> Lịch sử ra giá
-                </button>
-                <button class="tab-btn" id="tabChat" data-tab="chat">
-                  <i class="fa-regular fa-comments"></i> Phòng chat
-                </button>
-              </div>
-            </div>
+        <!-- View 1: Lịch sử ra giá -->
+        <div class="tab-content-view active" id="historyView">
+          <div class="history-scroll-list" id="historyContainer"></div>
+        </div>
 
-            <!-- View 1: Lịch sử ra giá -->
-            <div class="tab-content-view active" id="historyView">
-              <div class="history-scroll-list" id="historyContainer"></div>
-            </div>
-
-            <!-- View 2: Phòng chat -->
-            <div class="tab-content-view" id="chatView">
-              <div class="chat-messages-scroll" id="chatContainer"></div>
-              <form class="chat-input-area" id="chatForm">
-                <input
-                  type="text"
-                  id="chatInput"
-                  placeholder="Nhập tin nhắn điều hành..."
-                  autocomplete="off"
-                />
-                <button type="submit" class="btn-send-chat">
-                  <i class="fa-solid fa-paper-plane"></i>
-                </button>
-              </form>
-            </div>
+        <!-- View 2: Phòng chat (Tích hợp Chat chung & Chat riêng kiểu Messenger) -->
+        <div class="tab-content-view" id="chatView">
+          <!-- Sub-tabs chuyển đổi Chat chung và Chat riêng -->
+          <div class="chat-sub-tabs" style="display: flex; gap: 8px; padding: 6px 10px; border-bottom: 1px solid #eee;">
+            <button class="sub-tab-btn active" id="tabPublic" style="flex: 1; padding: 6px; border: none; background: #e2e8f0; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px;">Chat chung</button>
+            <button class="sub-tab-btn" id="tabPrivate" style="flex: 1; padding: 6px; border: none; background: #f1f5f9; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px;">Chat riêng</button>
           </div>
 
-          <!-- Thông tin phiên đấu giá -->
-          <div class="card session-info-card">
-            <div class="card-title title-gradient">
-              <i class="fa-solid fa-circle-info"></i> Thông tin phiên
-            </div>
+          <!-- Danh sách chọn người dùng để chat riêng -->
+          <div id="privateUserListContainer" style="display: none; max-height: 110px; overflow-y: auto; padding: 8px 10px; border-bottom: 1px solid #eee; background: #fafafa; font-size: 11px;">
+            <span style="color: #666; font-style: italic;">Chọn thành viên bên danh sách tham gia để chat riêng...</span>
+          </div>
 
-            <div class="stats-grid">
-              <div class="stat-box">
-                <i class="fa-regular fa-eye stat-icon"></i>
-                <div class="stat-info">
-                  <span class="stat-label">Lượt xem hiện tại</span>
-                  <span class="stat-val" id="statViews">--</span>
-                </div>
-              </div>
-              <div class="stat-box">
-                <i class="fa-solid fa-gavel stat-icon"></i>
-                <div class="stat-info">
-                  <span class="stat-label">Tổng số lượt ra giá</span>
-                  <span class="stat-val" id="statTotalBids">--</span>
-                </div>
-              </div>
-              <div class="stat-box">
-                <i class="fa-regular fa-clock stat-icon"></i>
-                <div class="stat-info">
-                  <span class="stat-label">Thời gian đã live</span>
-                  <span class="stat-val" id="statLiveTime">--</span>
-                </div>
-              </div>
-              <div class="stat-box">
-                <i class="fa-regular fa-user stat-icon"></i>
-                <div class="stat-info">
-                  <span class="stat-label">Người dẫn đầu</span>
-                  <span class="stat-val-highlight" id="statLeaderName">--</span>
-                  <span class="stat-subval" id="statLeaderBid">--</span>
-                </div>
-              </div>
-            </div>
+          <!-- Khung danh sách tin nhắn -->
+          <div class="chat-messages-scroll" id="chatContainer"></div>
 
-            <div class="session-notice">
-              <i class="fa-solid fa-circle-info notice-icon"></i>
-              <span id="sessionNoticeText">
+          <!-- Ô nhập tin nhắn -->
+          <form class="chat-input-area" id="chatForm">
+            <input
+                    type="text"
+                    id="chatInput"
+                    placeholder="Nhập nội dung tin nhắn..."
+                    autocomplete="off"
+            />
+            <button type="submit" class="btn-send-chat">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Thông tin phiên đấu giá -->
+      <div class="card session-info-card">
+        <div class="card-title title-gradient">
+          <i class="fa-solid fa-circle-info"></i> Thông tin phiên
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <i class="fa-regular fa-eye stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-label">Lượt xem hiện tại</span>
+              <span class="stat-val" id="statViews">--</span>
+            </div>
+          </div>
+          <div class="stat-box">
+            <i class="fa-solid fa-gavel stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-label">Tổng số lượt ra giá</span>
+              <span class="stat-val" id="statTotalBids">--</span>
+            </div>
+          </div>
+          <div class="stat-box">
+            <i class="fa-regular fa-clock stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-label">Thời gian đã live</span>
+              <span class="stat-val" id="statLiveTime">--</span>
+            </div>
+          </div>
+          <div class="stat-box">
+            <i class="fa-regular fa-user stat-icon"></i>
+            <div class="stat-info">
+              <span class="stat-label">Người dẫn đầu</span>
+              <span class="stat-val-highlight" id="statLeaderName">--</span>
+              <span class="stat-subval" id="statLeaderBid">--</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="session-notice">
+          <i class="fa-solid fa-circle-info notice-icon"></i>
+          <span id="sessionNoticeText">
                 Chú ý: Vui lòng kiểm tra kỹ thông tin sản phẩm trước khi gõ búa
                 chốt giá.
               </span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Cột Right: Danh sách người tham gia -->
-      <section class="col-right">
-        <div class="card participants-card">
-          <div class="participants-header">
-            <div class="card-title title-gradient">
-              <i class="fa-solid fa-users"></i> Danh sách tham gia
-            </div>
-            <span class="count-badge" id="participantCount">0</span>
-          </div>
-          <div
-            class="participants-scroll-list"
-            id="participantsContainer"
-          ></div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Modal Xác nhận Gõ Búa Chốt Giá -->
-    <div class="modal-overlay" id="hammerModal">
-      <div class="modal-card">
-        <div class="modal-icon hammer-icon">
-          <i class="fa-solid fa-gavel"></i>
-        </div>
-        <h3 class="modal-title">Xác nhận gõ búa chốt giá</h3>
-        <p class="modal-message" id="hammerModalMessage">--</p>
-        <div class="modal-actions">
-          <button class="btn-modal-cancel" id="btnCancelHammer">Hủy bỏ</button>
-          <button class="btn-modal-confirm" id="btnConfirmHammer">
-            Chốt giá ngay
-          </button>
         </div>
       </div>
     </div>
+  </section>
 
-    <!-- Modal Xác nhận Tạm Dừng Phiên Đấu Giá -->
-    <div class="modal-overlay" id="pauseModal">
-      <div class="modal-card">
-        <div class="modal-icon pause-icon">
-          <i class="fa-solid fa-pause"></i>
+  <!-- Cột Right: Danh sách người tham gia -->
+  <section class="col-right">
+    <div class="card participants-card">
+      <div class="participants-header">
+        <div class="card-title title-gradient">
+          <i class="fa-solid fa-users"></i> Danh sách tham gia
         </div>
-        <h3 class="modal-title" id="pauseModalTitle">Xác nhận tạm dừng</h3>
-        <p class="modal-message" id="pauseModalMessage">
-          Bạn có chắc chắn muốn tạm dừng phiên đấu giá hiện tại không? Tất cả
-          người dùng sẽ tạm thời không thể gửi giá.
-        </p>
-        <div class="modal-actions">
-          <button class="btn-modal-cancel" id="btnCancelPause">Quay lại</button>
-          <button class="btn-modal-pause-confirm" id="btnConfirmPause">
-            Tạm dừng ngay
-          </button>
-        </div>
+        <span class="count-badge" id="participantCount">0</span>
       </div>
+      <div
+              class="participants-scroll-list"
+              id="participantsContainer"
+      ></div>
     </div>
+  </section>
+</main>
 
-    <script src="Auctioneer.js"></script>
-  </body>
+<!-- Modal Xác nhận Gõ Búa Chốt Giá -->
+<div class="modal-overlay" id="hammerModal">
+  <div class="modal-card">
+    <div class="modal-icon hammer-icon">
+      <i class="fa-solid fa-gavel"></i>
+    </div>
+    <h3 class="modal-title">Xác nhận gõ búa chốt giá</h3>
+    <p class="modal-message" id="hammerModalMessage">--</p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" id="btnCancelHammer">Hủy bỏ</button>
+      <button class="btn-modal-confirm" id="btnConfirmHammer">
+        Chốt giá ngay
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Xác nhận Tạm Dừng Phiên Đấu Giá -->
+<div class="modal-overlay" id="pauseModal">
+  <div class="modal-card">
+    <div class="modal-icon pause-icon">
+      <i class="fa-solid fa-pause"></i>
+    </div>
+    <h3 class="modal-title" id="pauseModalTitle">Xác nhận tạm dừng</h3>
+    <p class="modal-message" id="pauseModalMessage">
+      Bạn có chắc chắn muốn tạm dừng phiên đấu giá hiện tại không? Tất cả
+      người dùng sẽ tạm thời không thể gửi giá.
+    </p>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" id="btnCancelPause">Quay lại</button>
+      <button class="btn-modal-pause-confirm" id="btnConfirmPause">
+        Tạm dừng ngay
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="Auctioneer.js"></script>
+</body>
 </html>
